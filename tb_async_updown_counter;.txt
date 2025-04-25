@@ -1,0 +1,60 @@
+module tb_async_updown_counter;
+
+	// Inputs
+	reg clk;
+	reg reset;
+	reg mod;
+
+	// Outputs
+	wire Q0;
+	wire Q1;
+	wire Q2;
+
+	// Instantiate the Unit Under Test (UUT)
+	async_updown_counter uut (
+		.clk(clk), 
+		.reset(reset), 
+		.mod(mod), 
+		.Q0(Q0), 
+		.Q1(Q1), 
+		.Q2(Q2)
+	);
+	
+	  // Clock generation (10ns period)
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+	 
+	  // Stimulus
+    initial begin
+        // Initialize inputs
+        reset = 1;
+        mod = 1; // Start with up count
+
+        // Hold reset for a few cycles
+        #15;
+        reset = 0;
+
+        // Count up for 80ns
+        #80;
+		  
+		  // Switch to count down
+        mod = 0;
+
+        // Count down for 80ns
+        #80;
+
+        // Finish simulation
+        $finish;
+    end
+
+    // Monitor the outputs
+    initial begin
+        $display("Time\tReset\tMod\tQ2 Q1 Q0");
+        $monitor("%0dns\t%b\t%b\t%b  %b  %b", $time, reset, mod, Q2, Q1, Q0);
+    end
+
+
+      
+endmodule
